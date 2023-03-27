@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.mes.db.dao.AchievesProjectExperienceDao">
+
+    <sql id="conditionAllColumn">
+        <where>
+            ape.delete_flag = 0
+            <if test="operCd != null and operCd != ''">
+                AND ape.oper_cd = #{operCd}
+            </if>
+            <if test="operNm != null and operNm != ''">
+                AND ape.oper_nm = #{operNm}
+            </if>
+            <if test="projectName != null and projectName != ''">
+                AND ape.project_name = #{projectName}
+            </if>
+            <if test="projectDescription != null and projectDescription != ''">
+                AND ape.project_description = #{projectDescription}
+            </if>
+            <if test="technicalPoints != null and technicalPoints != ''">
+                AND ape.technical_points = #{technicalPoints}
+            </if>
+            <if test="projectPersonNum != null">
+                AND ape.project_person_num = #{projectPersonNum}
+            </if>
+            <if test="projectRole != null and projectRole != ''">
+                AND ape.project_role = #{projectRole}
+            </if>
+            <if test="workContent != null and workContent != ''">
+                AND ape.work_content = #{workContent}
+            </if>
+            <if test="projectStage != null">
+                AND ape.project_stage = #{projectStage}
+            </if>
+            <if test="projectAchievements != null and projectAchievements != ''">
+                AND ape.project_achievements = #{projectAchievements}
+            </if>
+            <if test="affiliatedCompany != null and affiliatedCompany != ''">
+                AND ape.affiliated_company = #{affiliatedCompany}
+            </if>
+            <if test="workHistoryId != null">
+                AND ape.work_history_id = #{workHistoryId}
+            </if>
+        </where>
+    </sql>
+
+    <insert id="addAchievesProjectExperience" parameterType="AchievesProjectExperience">
+        insert into archives_project_experience (oper_cd, oper_nm, project_name, project_description, technical_points,
+                                                 project_person_num, project_role, work_content, project_stage,
+                                                 project_achievements, affiliated_company, work_history_id,
+                                                 create_user_code, create_user_name, create_date, remark)
+        values (
+                  #{operCd}
+                , #{operNm}
+                , #{projectName}
+                , #{projectDescription}
+                , #{technicalPoints}
+                , #{projectPersonNum}
+                , #{projectRole}
+                , #{workContent}
+                , #{projectStage}
+                , #{projectAchievements}
+                , #{affiliatedCompany}
+                , #{workHistoryId}
+                , #{createUserCode}
+                , #{createUserName}
+                , NOW()
+                , #{remark}
+               );
+    </insert>
+
+    <insert id="addAchievesProjectExperienceList" parameterType="AchievesProjectExperience">
+        insert into archives_project_experience (oper_cd, oper_nm, project_name, project_description, technical_points,
+                                                 project_person_num, project_role, work_content, project_stage,
+                                                 project_achievements, affiliated_company, work_history_id,
+                                                 create_user_code, create_user_name, create_date, remark)
+        values
+        <foreach collection="list" separator="," item="item">
+            (
+              #{item.operCd}
+            , #{item.operNm}
+            , #{item.projectName}
+            , #{item.projectDescription}
+            , #{item.technicalPoints}
+            , #{item.projectPersonNum}
+            , #{item.projectRole}
+            , #{item.workContent}
+            , #{item.projectStage}
+            , #{item.projectAchievements}
+            , #{item.affiliatedCompany}
+            , #{item.workHistoryId}
+            , #{item.createUserCode}
+            , #{item.createUserName}
+            , NOW()
+            , #{item.remark}
+            )
+        </foreach>
+    </insert>
+
+    <update id="editAchievesProjectExperience" parameterType="AchievesProjectExperience">
+        update archives_project_experience
+        <set>
+            update_user_code = #{updateUserCode}
+            , update_user_name = #{updateUserName}
+            , update_date = NOW()
+            <if test="operCd != null and operCd != ''">
+                , oper_cd = #{operCd}
+            </if>
+            <if test="operNm != null and operNm != ''">
+                , oper_nm = #{operNm}
+            </if>
+            <if test="projectName != null and projectName != ''">
+                , project_name = #{projectName}
+            </if>
+            <if test="projectDescription != null and projectDescription != ''">
+                , project_description = #{projectDescription}
+            </if>
+            <if test="technicalPoints != null and technicalPoints != ''">
+                , technical_points = #{technicalPoints}
+            </if>
+            <if test="projectPersonNum != null and projectPersonNum != ''">
+                , project_person_num = #{projectPersonNum}
+            </if>
+            <if test="projectRole != null and projectRole != ''">
+                , project_role = #{projectRole}
+            </if>
+            <if test="workContent != null and workContent != ''">
+                , work_content = #{workContent}
+            </if>
+            <if test="projectStage != null and projectStage != ''">
+                , project_stage = #{projectStage}
+            </if>
+            <if test="projectAchievements != null and projectAchievements != ''">
+                , project_achievements = #{projectAchievements}
+            </if>
+            <if test="affiliatedCompany != null and affiliatedCompany != ''">
+                , affiliated_company = #{affiliatedCompany}
+            </if>
+            <if test="remark != null and remark != ''">
+                , remark = #{remark}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteAchievesProjectExperienceList">
+        update archives_project_experience
+        <set>
+            update_user_code = #{updateUserCode}
+            , update_user_name = #{updateUserName}
+            , update_date = NOW()
+            , delete_flag = 1
+        </set>
+        <where>
+            id IN
+            <foreach collection="idList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <select id="getOneRecord" parameterType="AchievesProjectExperience" resultType="AchievesProjectExperience">
+        select ape.*
+        from archives_project_experience ape
+        <include refid="conditionAllColumn"/>
+        limit 1
+    </select>
+
+    <select id="getPage" parameterType="AchievesProjectExperience" resultType="AchievesProjectExperience">
+        select ape.*
+        from archives_project_experience ape
+        <include refid="conditionAllColumn"/>
+        limit #{begin},#{limit}
+    </select>
+
+    <select id="getPageCount" parameterType="AchievesProjectExperience" resultType="Integer">
+        select COUNT(ape.id)
+        from archives_project_experience ape
+        <include refid="conditionAllColumn"/>
+    </select>
+
+    <select id="getList" parameterType="AchievesProjectExperience" resultType="AchievesProjectExperience">
+        select ape.*
+        from archives_project_experience ape
+        <include refid="conditionAllColumn"/>
+    </select>
+</mapper>
